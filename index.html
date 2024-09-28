@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Démarche Marketing & Définition des Marchés</title>
+    <style>
+        body {
+            font-family: 'Mayan', sans-serif;
+            margin: 0;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container, .summary {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-image: url('images/back.jpg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        .choices {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-left: 20%;
+        }
+        .choices li {
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #CC0000;
+        }
+        .summary {
+            display: none;
+        }
+        .summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .summary li {
+            text-align: left;
+            margin-left: 20%;
+            margin-bottom: 10px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .quiz-container, .summary {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .quiz-container, .summary {
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            button {
+                font-size: 12px;
+                padding: 6px 12px;
+                border-radius: 10px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .quiz-container, .summary {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="quiz-container" id="quiz-container">
+    <h2>QCM ENTRAINEMENT - New Product Development and Life Cycle</h2>
+    <div id="question-container">
+        <!-- Les questions seront affichées ici dynamiquement -->
+    </div>
+    <button id="next-button" onclick="nextQuestion()">Suivant</button>
+</div>
+
+<div class="summary" id="summary">
+    <h3>Récapitulatif</h3>
+    <ul id="summary-list">
+        <!-- Le récapitulatif des réponses sera affiché ici -->
+    </ul>
+    <div class="score" id="score"></div>
+    <button onclick="restartQuiz()">Recommencer</button>
+</div>
+
+<script>
+    const quizData = [
+        { question: "What is acquisition in the context of new product development?", choices: ["Developing a new product in-house", "Purchasing a product from a competitor", "Buying an entire company, a patent, or a license to produce someone else’s product", "Expanding into new international markets"], correct: 2 },
+        { question: "Which of the following is an example of new product development?", choices: ["Acquiring a competitor's product", "Creating original products, improvements, or modifications through a company's own R&D", "Licensing a product to another company", "Selling off older product lines to invest in new ventures"], correct: 1 },
+        { question: "What is the goal of idea screening in the new product development process?", choices: ["To develop physical prototypes", "To identify good ideas and eliminate poor ones", "To test the market response to the product", "To analyze the competition's strategy"], correct: 1 },
+        { question: "What does the R-W-W framework stand for in idea screening?", choices: ["Return on investment, Winners, Weaknesses", "Real, Win, Worth doing", "Revenue, Work, Win-win", "Research, Worth, Wholesale"], correct: 1 },
+        { question: "Which stage involves creating a detailed version of the product idea in meaningful consumer terms?", choices: ["Idea generation", "Concept development and testing", "Test marketing", "Commercialization"], correct: 1 },
+        { question: "In which stage of the new product development process is a prototype typically created?", choices: ["Idea generation", "Concept testing", "Product development", "Commercialization"], correct: 2 },
+        { question: "What is test marketing?", choices: ["Testing a product and marketing program in a realistic market setting", "Evaluating the competition's market share", "Running digital advertisements before launching the product", "Creating a test version of the product for internal use only"], correct: 0 },
+        { question: "Which of the following is not a characteristic of the growth stage in the product life cycle?", choices: ["Increasing competition", "Sales increasing", "Slow sales growth", "Economies of scale"], correct: 2 },
+        { question: "What typically happens during the maturity stage of the product life cycle?", choices: ["The market experiences rapid sales growth", "There is a slowdown in sales, and competition intensifies", "The product is introduced to new markets for the first time", "Companies exit the market due to low demand"], correct: 1 },
+        { question: "In the introduction stage of the product life cycle, what is typically expected?", choices: ["High profits", "Low distribution and promotion costs", "Slow sales growth and high promotion expenses", "High sales and declining competition"], correct: 2 },
+        { question: "During the decline stage, what is one possible strategy a company might use?", choices: ["Increase prices to boost profits", "Modify the product to extend its life", "Rapidly expand production", "Increase the product's advertising budget"], correct: 1 },
+        { question: "What is the purpose of the business analysis stage in new product development?", choices: ["To conduct surveys among potential consumers", "To review sales, cost, and profit projections", "To develop a detailed marketing campaign", "To finalize the product’s design features"], correct: 1 },
+        { question: "Which factor is not typically considered during commercialization of a new product?", choices: ["When to launch", "Where to launch", "Product testing with internal staff", "Planned market rollout"], correct: 2 },
+        { question: "Which of the following best describes modifying the marketing mix in the maturity stage?", choices: ["Changing the product design", "Reducing the price and increasing promotions", "Adding new features to attract more buyers", "Halting production entirely"], correct: 1 },
+        { question: "Which of the following is an example of a product in the decline stage of the product life cycle?", choices: ["Electric cars in their early years", "Smartphones during their rapid growth", "DVD players being phased out due to streaming services", "A new smartwatch model that has just been launched"], correct: 2 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswers = [];
+
+    function loadQuestion() {
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+
+        const questionData = quizData[currentQuestionIndex];
+        const questionElem = document.createElement('div');
+        questionElem.className = 'question';
+        questionElem.textContent = questionData.question;
+
+        const choicesElem = document.createElement('ul');
+        choicesElem.className = 'choices';
+
+        questionData.choices.forEach((choice, index) => {
+            const choiceElem = document.createElement('li');
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'radio';
+            choiceInput.name = 'choice';
+            choiceInput.value = index;
+            choiceInput.id = `choice${index}`;
+            
+            const choiceLabel = document.createElement('label');
+            choiceLabel.htmlFor = `choice${index}`;
+            choiceLabel.textContent = choice;
+
+            choiceElem.appendChild(choiceInput);
+            choiceElem.appendChild(choiceLabel);
+            choicesElem.appendChild(choiceElem);
+        });
+
+        container.appendChild(questionElem);
+        container.appendChild(choicesElem);
+    }
+
+    function nextQuestion() {
+        const selectedChoice = document.querySelector('input[name="choice"]:checked');
+        if (!selectedChoice) {
+            alert("Veuillez sélectionner une réponse !");
+            return;
+        }
+
+        selectedAnswers.push(parseInt(selectedChoice.value));
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+
+        const summaryList = document.getElementById('summary-list');
+        summaryList.innerHTML = '';
+
+        let correctAnswers = 0;
+
+        quizData.forEach((q, index) => {
+            const summaryItem = document.createElement('li');
+            summaryItem.innerHTML = `
+                <strong>${q.question}</strong><br>
+                <div style="text-align: left; margin-left: 20%;">
+                    Votre réponse: ${q.choices[selectedAnswers[index]]} - 
+                    ${selectedAnswers[index] === q.correct ? '<span class="correct">Correct</span>' : '<span class="incorrect">Incorrect</span>'}<br>
+                    Bonne réponse: ${q.choices[q.correct]}
+                </div>
+            `;
+            summaryList.appendChild(summaryItem);
+            if (selectedAnswers[index] === q.correct) {
+                correctAnswers++;
+            }
+        });
+
+        document.getElementById('score').textContent = `Score: ${correctAnswers} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = [];
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+
+
+
+
+</html>
